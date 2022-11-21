@@ -26,6 +26,7 @@
         <commons-io.verson>2.5</commons-io.verson>
         <validation-api.verson>2.0.1.Final</validation-api.verson>
         <tomcat-embed-core>9.0.65</tomcat-embed-core>
+        <mysql.connector>8.0.30</mysql.connector>
     </properties>
 
     <dependencies>
@@ -65,6 +66,11 @@
             <artifactId>tomcat-embed-core</artifactId>
             <version>${tomcat-embed-core}</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+           <version>${mysql.connector}</version>
         </dependency>
     </dependencies>
 
