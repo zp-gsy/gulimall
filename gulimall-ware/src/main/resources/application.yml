@@ -9,13 +9,8 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   cloud:
     nacos:
-      server-addr: 127.0.0.1:8848
-      config:
-        import-check:
-          enabled: false
-        import:
-          # 导入nacos配置中心的配置文件
-          - optional:nacos: spring-config-import-example.yaml
+      discovery:
+        server-addr: 127.0.0.1:8848
 
 mybatis-plus:
   global-config:

@@ -27,6 +27,7 @@
         <validation-api.verson>2.0.1.Final</validation-api.verson>
         <tomcat-embed-core>9.0.65</tomcat-embed-core>
         <mysql.connector>8.0.30</mysql.connector>
+        <bootstrap.verson>3.1.5</bootstrap.verson>
     </properties>
 
     <dependencies>
@@ -74,6 +75,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-bootstrap</artifactId>
+            <version>${bootstrap.verson}</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
         </dependency>
@@ -82,6 +89,7 @@
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
         </dependency>
+
     </dependencies>
 
     <dependencyManagement>
