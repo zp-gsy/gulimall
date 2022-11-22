@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: gulimall-gateway
+  cloud:
+    nacos:
+        server-addr: 127.0.0.1:8848
+        config:
+          import-check:
+            enabled: false
+          import:
+            # 导入nacos配置中心的配置文件
+            - optional:nacos: spring-config-import-example.yaml
+
+  port: 88
