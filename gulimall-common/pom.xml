@@ -28,6 +28,7 @@
         <tomcat-embed-core>9.0.65</tomcat-embed-core>
         <mysql.connector>8.0.30</mysql.connector>
         <bootstrap.verson>3.1.5</bootstrap.verson>
+        <loadbalancer.version>3.0.3</loadbalancer.version>
     </properties>
 
     <dependencies>
@@ -71,7 +72,7 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-           <version>${mysql.connector}</version>
+            <version>${mysql.connector}</version>
         </dependency>
 
         <dependency>
@@ -88,6 +89,13 @@
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+        </dependency>
+        <!--SpringCloud Feign在Hoxton.M2 RELEASED版本之后不再使用ribbon
+        而是使用spring-cloud-loadbalancer，所以在不引入spring-cloud-loadbalancer情况下会报错-->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-loadbalancer</artifactId>
+            <version>${loadbalancer.version}</version>
         </dependency>
 
     </dependencies>
