@@ -18,6 +18,11 @@ import java.util.stream.Collectors;
 @Configuration
 public class FeignConfig {
 
+    /**
+     * 网关调用feign会报错
+     * @param converters converters
+     * @return HttpMessageConverters
+     */
     @Bean
     @ConditionalOnMissingBean
     public HttpMessageConverters messageConverters(ObjectProvider<HttpMessageConverter<?>> converters) {
