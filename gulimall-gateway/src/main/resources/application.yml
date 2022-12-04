@@ -16,6 +16,22 @@ spring:
           uri: https://www.github.com
           predicates:
             - Query=url,github
+
+        - id: product-route
+          uri: lb://gulimall-product
+          predicates:
+            - Path=/api/product/**
+          filters:
+            - RewritePath=/api/?(?<segment>.*),/$\{segment}
+
+        - id: admin-route
+          uri: lb://renren-fast
+          predicates:
+            - Path=/api/**
+          filters:
+            - RewritePath=/api/?(?<segment>.*),/renren-fast/$\{segment}
+
+
 #调用示例
 # http://localhost:88/s?wd=Ep%E6%B5%81%E8%8B%8F&url=baidu
 #https://github.com/zsy0216?url=github
