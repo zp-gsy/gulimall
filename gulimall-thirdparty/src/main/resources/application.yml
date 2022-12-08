@@ -1,0 +1,19 @@
+
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+alibaba:
+  cloud:
+    access-key: LTAI5tRptxCQCeE9TwQuzigV
+    secret-key: 55vxQOV9PEMzrjXWffwcktZiFrvfLb
+    oss:
+      endpoint: oss-cn-hangzhou.aliyuncs.com
+      bucketName: gulimall-zp1
+
+
+
+
+server:
+  port: 30000
