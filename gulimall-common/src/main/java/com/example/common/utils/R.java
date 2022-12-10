@@ -8,9 +8,10 @@
 
 package com.example.common.utils;
 
+import com.example.common.exception.BIZException;
 import org.apache.http.HttpStatus;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -18,7 +19,7 @@ import java.util.Map;
  *
  * @author Mark sunlightcs@gmail.com
  */
-public class R extends HashMap<String, Object> {
+public class R extends LinkedHashMap<String, Object> {
 	private static final long serialVersionUID = 1L;
 	
 	public R() {
@@ -27,9 +28,11 @@ public class R extends HashMap<String, Object> {
 	}
 	
 	public static R error() {
-		return error(HttpStatus.SC_INTERNAL_SERVER_ERROR, "未知异常，请联系管理员");
+		return error(BIZException.UNKNOWN_EXCEPTION.getCode(), BIZException.UNKNOWN_EXCEPTION.getMsg());
 	}
-	
+	public static R error(BIZException exception) {
+		return error(exception.getCode(), exception.getMsg());
+	}
 	public static R error(String msg) {
 		return error(HttpStatus.SC_INTERNAL_SERVER_ERROR, msg);
 	}

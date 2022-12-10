@@ -2,20 +2,28 @@ package com.example.gulimall.thirdparty;
 
 import com.aliyun.oss.ClientException;
 import com.aliyun.oss.OSS;
-import com.aliyun.oss.OSSClientBuilder;
 import com.aliyun.oss.OSSException;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.io.*;
-import java.text.DateFormat;
-import java.util.Date;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 
 @SpringBootTest
 class GulimallThirdpartyApplicationTests {
 
+    @Autowired
+    private  OSS ossClient;
+
+    @Value("${alibaba.cloud.access-key}")
+    private String accessId;
     @Test
     void contextLoads() {
+        System.out.println("accessId:"+accessId);
         // Endpoint以华东1（杭州）为例，其它Region请按实际情况填写。
         String endpoint = "https://oss-cn-hangzhou.aliyuncs.com";
         // 阿里云账号AccessKey拥有所有API的访问权限，风险很高。强烈建议您创建并使用RAM用户进行API访问或日常运维，请登录RAM控制台创建RAM用户。
@@ -27,10 +35,10 @@ class GulimallThirdpartyApplicationTests {
         String objectName = "2022-12-08/111.png";
 
         // 创建OSSClient实例。
-        OSS ossClient = new OSSClientBuilder().build(endpoint, accessKeyId, accessKeySecret);
+//        OSS ossClient = new OSSClientBuilder().build(endpoint, accessKeyId, accessKeySecret);
 
         try {
-            InputStream inputStream = new FileInputStream(new File("/xxx"));
+            InputStream inputStream = new FileInputStream(new File("D:\\zp\\个人资料\\视频\\谷粒商城\\Guli Mall\\课件和文档(老版)\\基础篇\\资料\\pics\\0d40c24b264aa511.jpg"));
             ossClient.putObject(bucketName, objectName, inputStream);
         } catch (OSSException oe) {
             System.out.println("Caught an OSSException, which means your request made it to OSS, "

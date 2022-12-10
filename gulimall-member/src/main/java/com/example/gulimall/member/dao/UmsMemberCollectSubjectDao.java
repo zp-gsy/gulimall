@@ -1,7 +1,7 @@
 package com.example.gulimall.member.dao;
 
-import com.example.gulimall.member.entity.UmsMemberCollectSubjectEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.example.gulimall.member.entity.UmsMemberCollectSubjectEntity;
 import org.apache.ibatis.annotations.Mapper;
 
 /**

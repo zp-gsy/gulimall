@@ -1,7 +1,7 @@
 package com.example.gulimall.product.dao;
 
-import com.example.gulimall.product.entity.AttrAttrgroupRelationEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.example.gulimall.product.entity.AttrAttrgroupRelationEntity;
 import org.apache.ibatis.annotations.Mapper;
 
 /**

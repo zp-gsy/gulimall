@@ -1,7 +1,7 @@
 package com.example.gulimall.member.dao;
 
-import com.example.gulimall.member.entity.UmsIntegrationChangeHistoryEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.example.gulimall.member.entity.UmsIntegrationChangeHistoryEntity;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
