@@ -1,7 +1,7 @@
 package com.example.gulimall.order.dao;
 
-import com.example.gulimall.order.entity.PaymentInfoEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.example.gulimall.order.entity.PaymentInfoEntity;
 import org.apache.ibatis.annotations.Mapper;
 
 /**

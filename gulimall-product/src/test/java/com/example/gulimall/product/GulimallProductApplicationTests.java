@@ -18,7 +18,7 @@ class GulimallProductApplicationTests {
     void contextLoads() {
 
         AttrEntity attrEntity = new AttrEntity();
-        attrEntity.setAttrName("张三");
+        attrEntity.setAttrName("张三111");
         attrDao.insert(attrEntity);
         List<AttrEntity> list = attrDao.selectList(new QueryWrapper<>());
         list.forEach(t->{

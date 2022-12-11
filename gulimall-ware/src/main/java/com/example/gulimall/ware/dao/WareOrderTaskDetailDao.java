@@ -1,7 +1,7 @@
 package com.example.gulimall.ware.dao;
 
-import com.example.gulimall.ware.entity.WareOrderTaskDetailEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.example.gulimall.ware.entity.WareOrderTaskDetailEntity;
 import org.apache.ibatis.annotations.Mapper;
 
 /**

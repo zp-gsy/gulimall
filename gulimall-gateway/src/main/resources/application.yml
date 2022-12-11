@@ -2,8 +2,45 @@ spring:
   application:
     name: gulimall-gateway
   cloud:
-    nacos:
-      discovery:
-        server-addr: 127.0.0.1:8848
+    gateway:
+      routes:
+        #Query A 参数有A就行，Query B,C 参数B的值为C即可
+        #实现针对于“http://localhost:88/hello?url=baidu”，转发到“https://www.baidu.com/hello”，
+        #针对于“http://localhost:88/hello?url=qq”的请求，转发到“https://www.qq.com/hello”
+        - id: baidu_route
+          uri: https://www.baidu.com
+          predicates:
+            - Query=url,baidu
 
-port: 88
+        - id: github_route
+          uri: https://www.github.com
+          predicates:
+            - Query=url,github
+
+        - id: product-route
+          uri: lb://gulimall-product
+          predicates:
+            - Path=/api/product/**
+          filters:
+            - RewritePath=/api/?(?<segment>.*),/$\{segment}
+
+        - id: thirdparty-route
+          uri: lb://gulimall-thirdparty
+          predicates:
+            - Path=/api/thirdparty/**
+          filters:
+           - RewritePath=/api/?(?<segment>.*),/$\{segment}
+
+        - id: admin-route
+          uri: lb://renren-fast
+          predicates:
+            - Path=/api/**
+          filters:
+            - RewritePath=/api/?(?<segment>.*),/renren-fast/$\{segment}
+
+
+#调用示例
+# http://localhost:88/s?wd=Ep%E6%B5%81%E8%8B%8F&url=baidu
+#https://github.com/zsy0216?url=github
+server:
+  port: 88
