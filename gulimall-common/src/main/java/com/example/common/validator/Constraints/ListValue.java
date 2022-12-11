@@ -21,7 +21,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 public @interface ListValue {
 
-    String message() default "{javax.validation.constraints.NotBlank.message}";
+    String message() default "{com.example.common.validator.Constraints.ListValue.message}";
 
     Class<?>[] groups() default { };
 

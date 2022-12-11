@@ -48,7 +48,7 @@ public class BrandEntity implements Serializable {
 	/**
 	 * 显示状态[0-不显示；1-显示]
 	 */
-	@ListValue(value={0,1}, message = "显示状态必须是0或1", groups = {UpdateGroup.class})
+	@ListValue(value={0,1}, groups = {UpdateGroup.class})
 	private Integer showStatus;
 	/**
 	 * 检索首字母
