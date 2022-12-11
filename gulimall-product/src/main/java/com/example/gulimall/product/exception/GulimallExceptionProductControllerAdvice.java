@@ -38,7 +38,7 @@ public class GulimallExceptionProductControllerAdvice {
 
     @ExceptionHandler(Throwable.class)
     public R handlerThrowException(Throwable throwable, HttpServletRequest httpServletRequest) {
-        log.error("Throwable异常: {}", throwable.getMessage());
+        log.error("Throwable异常: ", throwable);
         return R.error().put("path", httpServletRequest.getServletPath());
     }
 }

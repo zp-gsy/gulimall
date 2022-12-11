@@ -2,6 +2,7 @@ package com.example.gulimall.product.controller;
 
 import com.example.common.utils.PageUtils;
 import com.example.common.utils.R;
+import com.example.common.validator.group.AddGroup;
 import com.example.common.validator.group.Group;
 import com.example.common.validator.group.UpdateGroup;
 import com.example.gulimall.product.entity.BrandEntity;
@@ -55,7 +56,7 @@ public class BrandController {
      */
     @RequestMapping("/save")
    // @RequiresPermissions("product:brand:save")
-    public R save(@Validated(value = {Group.class}) @RequestBody BrandEntity brand){
+    public R save(@Validated(value = {AddGroup.class}) @RequestBody BrandEntity brand){
 		brandService.save(brand);
 
         return R.ok();
@@ -67,7 +68,8 @@ public class BrandController {
     @RequestMapping("/update")
     //@RequiresPermissions("product:brand:update")
     public R update(@Validated(value = {UpdateGroup.class}) @RequestBody BrandEntity brand){
-		brandService.updateById(brand);
+		//brandService.updateById(brand);
+        brandService.updateDetail(brand);
         return R.ok();
     }
 

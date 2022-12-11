@@ -4,6 +4,8 @@ import com.example.common.utils.PageUtils;
 import com.example.common.utils.R;
 import com.example.gulimall.product.entity.AttrGroupEntity;
 import com.example.gulimall.product.service.AttrGroupService;
+import com.example.gulimall.product.service.CategoryService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,18 +23,30 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("product/attrgroup")
+@RequiredArgsConstructor
 public class AttrGroupController {
-    @Autowired
-    private AttrGroupService attrGroupService;
+    private final AttrGroupService attrGroupService;
+
+    private final CategoryService categoryService;
+
+    //api/product/attrgroup/3/attr/relation?t=1670765272239
+    ///product/attrgroup/{attrgroupId}/attr/relation
+
+//    @GetMapping("/{attrgroupId}//attr/relation")
+//    public R getAttrGroupRelation(@PathVariable("attrgroupId") String attrgroupId){
+//
+//        return R.ok();
+//    }
 
     /**
      * 列表
      */
-    @RequestMapping("/list")
+    @RequestMapping("/list/{catelogId}")
     //@RequiresPermissions("product:attrgroup:list")
-    public R list(@RequestParam Map<String, Object> params){
-        PageUtils page = attrGroupService.queryPage(params);
-
+    public R list(@RequestParam Map<String, Object> params,
+                  @PathVariable("catelogId") Long catelogId){
+//        PageUtils page = attrGroupService.queryPage(params);
+        PageUtils page = attrGroupService.queryPage(params, catelogId);
         return R.ok().put("page", page);
     }
 
@@ -44,7 +58,9 @@ public class AttrGroupController {
    // @RequiresPermissions("product:attrgroup:info")
     public R info(@PathVariable("attrGroupId") Long attrGroupId){
 		AttrGroupEntity attrGroup = attrGroupService.getById(attrGroupId);
-
+        //封装catelogPath 完整路径
+        Long[] catelogPath = categoryService.findPathByCatId(attrGroup.getCatelogId());
+        attrGroup.setCatelogPath(catelogPath);
         return R.ok().put("attrGroup", attrGroup);
     }
 

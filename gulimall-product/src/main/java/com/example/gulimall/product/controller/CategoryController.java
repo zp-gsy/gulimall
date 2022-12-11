@@ -49,6 +49,11 @@ public class CategoryController {
         return R.ok().put("data", category);
     }
 
+    /**
+     * 修改分类父子关系以及顺序
+     * @param category
+     * @return
+     */
     @RequestMapping("/update/sort")
     // @RequiresPermissions("product:category:save")
     public R updateSorts(@RequestBody CategoryEntity[] category){
@@ -74,7 +79,7 @@ public class CategoryController {
     @RequestMapping("/update")
     //@RequiresPermissions("product:category:update")
     public R update(@RequestBody CategoryEntity category){
-		categoryService.updateById(category);
+		categoryService.updateDeatil(category);
 
         return R.ok();
     }
