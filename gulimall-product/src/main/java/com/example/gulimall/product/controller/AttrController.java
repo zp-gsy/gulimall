@@ -2,12 +2,9 @@ package com.example.gulimall.product.controller;
 
 import com.example.common.utils.PageUtils;
 import com.example.common.utils.R;
-import com.example.gulimall.product.entity.AttrEntity;
 import com.example.gulimall.product.service.AttrService;
-import com.example.gulimall.product.service.impl.CategoryServiceImpl;
 import com.example.gulimall.product.vo.AttrVo;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -32,10 +29,11 @@ public class AttrController {
      * 获取分类规格参数
      * /product/attr/base/list/{catelogId}
      */
-    @GetMapping("/base/list/{catelogId}")
+    @GetMapping("/{attrType}/list/{catelogId}")
     public R getBaseAttr(@RequestParam Map<String, Object> params,
-                         @PathVariable("catelogId") Long catelogId){
-        PageUtils page = attrService.queryBaseAttr(params, catelogId);
+                         @PathVariable("catelogId") Long catelogId,
+                         @PathVariable("attrType") String attrType){
+        PageUtils page = attrService.queryBaseAttr(params, catelogId, attrType);
         return R.ok().put("page",page);
     }
 

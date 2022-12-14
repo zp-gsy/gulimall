@@ -3,15 +3,14 @@ package com.example.gulimall.product.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.common.Constant.Constant;
 import com.example.common.utils.PageUtils;
 import com.example.common.utils.Query;
-import com.example.gulimall.product.dao.AttrAttrgroupRelationDao;
 import com.example.gulimall.product.dao.AttrDao;
 import com.example.gulimall.product.dao.AttrGroupDao;
 import com.example.gulimall.product.dao.CategoryDao;
 import com.example.gulimall.product.entity.AttrAttrgroupRelationEntity;
 import com.example.gulimall.product.entity.AttrEntity;
-import com.example.gulimall.product.entity.BrandEntity;
 import com.example.gulimall.product.entity.CategoryEntity;
 import com.example.gulimall.product.service.AttrAttrgroupRelationService;
 import com.example.gulimall.product.service.AttrService;
@@ -33,8 +32,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements AttrService {
 
-//    private final AttrAttrgroupRelationDao attrAttrgroupRelationDao;
-
     private final CategoryDao categoryDao;
 
     private final AttrGroupDao attrGroupDao;
@@ -54,15 +51,20 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
     }
 
     @Override
-    public PageUtils queryBaseAttr(Map<String, Object> params, Long catelogId) {
+    public PageUtils queryBaseAttr(Map<String, Object> params, Long catelogId, String attrType) {
 
-        QueryWrapper<AttrEntity> wrapper = new QueryWrapper<>();
+        QueryWrapper<AttrEntity> wrapper = new QueryWrapper<AttrEntity>()
+                .eq("attr_type",
+                        attrType.equalsIgnoreCase("base") ?
+                                Constant.ProductConstant.ATTR_TYPE_BASE.getCode() :
+                                Constant.ProductConstant.ATTR_TYPE_SALE.getCode()
+                );
         String key = (String) params.get("key");
-        if(catelogId != 0){
+        if (catelogId != 0) {
             wrapper.eq("catelog_id", catelogId);
         }
-        if(!ObjectUtils.isEmpty(key)){
-            wrapper.and((obj)->{
+        if (!ObjectUtils.isEmpty(key)) {
+            wrapper.and((obj) -> {
                 obj.eq("attr_id", key).or().like("attr_name", key);
             });
         }
@@ -70,27 +72,28 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
                 new Query<AttrEntity>().getPage(params),
                 wrapper
         );
-        PageUtils pageUtils = new PageUtils(page);
+
+
         List<AttrResVo> list = page.getRecords().stream().map((obj) -> {
             AttrResVo resVo = new AttrResVo();
             BeanUtils.copyProperties(obj, resVo);
             CategoryEntity category = categoryDao.selectById(obj.getCatelogId());
             //设置分类名字
-            if(Objects.nonNull(category)){
+            if (Objects.nonNull(category)) {
                 resVo.setCatelogName(category.getName());
             }
-
             QueryWrapper<AttrAttrgroupRelationEntity> queryWrapper = new QueryWrapper<>();
             queryWrapper.eq("attr_id", obj.getAttrId());
             AttrAttrgroupRelationEntity relation = attrAttrgroupRelationService.getOne(queryWrapper);
             //设置分组名字
-            if(Objects.nonNull(relation)){
+            if (Objects.nonNull(relation)) {
                 Long attrGroupId = relation.getAttrGroupId();
                 resVo.setGroupName(attrGroupDao.selectById(attrGroupId).getAttrGroupName());
             }
             return resVo;
         }).collect(Collectors.toList());
 
+        PageUtils pageUtils = new PageUtils(page);
         pageUtils.setList(list);
         return pageUtils;
     }
@@ -102,11 +105,13 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
         BeanUtils.copyProperties(attrVo, attr);
         //保存基本信息
         this.save(attr);
-        //保存关联关系
-        AttrAttrgroupRelationEntity entity = new AttrAttrgroupRelationEntity();
-        entity.setAttrGroupId(attrVo.getAttrGroupId());
-        entity.setAttrId(attr.getAttrId());
-        attrAttrgroupRelationService.save(entity);
+        if (Objects.equals(Constant.ProductConstant.ATTR_TYPE_BASE.getCode(), attrVo.getAttrType())) {
+            //保存关联关系
+            AttrAttrgroupRelationEntity entity = new AttrAttrgroupRelationEntity();
+            entity.setAttrGroupId(attrVo.getAttrGroupId());
+            entity.setAttrId(attr.getAttrId());
+            attrAttrgroupRelationService.save(entity);
+        }
 
     }
 
@@ -118,7 +123,7 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
         QueryWrapper<AttrAttrgroupRelationEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("attr_id", attrEntity.getAttrId());
         AttrAttrgroupRelationEntity relation = attrAttrgroupRelationService.getOne(queryWrapper);
-        if(Objects.nonNull(relation)){
+        if (Objects.nonNull(relation)) {
             attrVo.setAttrGroupId(relation.getAttrGroupId());
         }
 
@@ -131,17 +136,18 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
     @Override
     public void updateAttr(AttrVo attrVo) {
         AttrEntity entity = new AttrEntity();
-        BeanUtils.copyProperties(attrVo,entity);
+        BeanUtils.copyProperties(attrVo, entity);
         this.updateById(entity);
-        //更新关联关系
-        QueryWrapper<AttrAttrgroupRelationEntity> wrapper = new QueryWrapper<>();
-        AttrAttrgroupRelationEntity relation = new AttrAttrgroupRelationEntity();
-        relation.setAttrId(entity.getAttrId());
-        relation.setAttrGroupId(attrVo.getAttrGroupId());
-        wrapper.eq("attr_id", entity.getAttrId());
-        //存在记录就更新 没有记录说明之前没有关联 需要新增关联关系
-        attrAttrgroupRelationService.saveOrUpdate(relation, wrapper);
-
+        if (Objects.equals(Constant.ProductConstant.ATTR_TYPE_BASE.getCode(), attrVo.getAttrType())) {
+            //更新关联关系
+            QueryWrapper<AttrAttrgroupRelationEntity> wrapper = new QueryWrapper<>();
+            AttrAttrgroupRelationEntity relation = new AttrAttrgroupRelationEntity();
+            relation.setAttrId(entity.getAttrId());
+            relation.setAttrGroupId(attrVo.getAttrGroupId());
+            wrapper.eq("attr_id", entity.getAttrId());
+            //存在记录就更新 没有记录说明之前没有关联 需要新增关联关系
+            attrAttrgroupRelationService.saveOrUpdate(relation, wrapper);
+        }
     }
 
 }

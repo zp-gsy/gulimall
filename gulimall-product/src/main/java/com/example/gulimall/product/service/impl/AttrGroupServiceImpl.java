@@ -5,19 +5,30 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.common.utils.PageUtils;
 import com.example.common.utils.Query;
+import com.example.gulimall.product.dao.AttrDao;
 import com.example.gulimall.product.dao.AttrGroupDao;
+import com.example.gulimall.product.entity.AttrAttrgroupRelationEntity;
+import com.example.gulimall.product.entity.AttrEntity;
 import com.example.gulimall.product.entity.AttrGroupEntity;
+import com.example.gulimall.product.service.AttrAttrgroupRelationService;
 import com.example.gulimall.product.service.AttrGroupService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
-import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+import java.util.stream.Collectors;
 
 
 @Service("attrGroupService")
+@RequiredArgsConstructor
 public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEntity> implements AttrGroupService {
+
+    private final AttrAttrgroupRelationService attrAttrgroupRelationService;
+
+    private final AttrDao attrDao;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -49,6 +60,22 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
                 wrapper
         );
         return new PageUtils(page);
+    }
+
+    @Override
+    public List<AttrEntity> getAttrRelation(Long attrGroupId) {
+        List<AttrAttrgroupRelationEntity> list = attrAttrgroupRelationService
+                .lambdaQuery()
+                .eq(AttrAttrgroupRelationEntity::getAttrGroupId, attrGroupId)
+                .list();
+
+        List<Long> listAttrId = list.stream().map((attr) -> {
+            return attr.getAttrId();
+        }).collect(Collectors.toList());
+
+        return listAttrId.isEmpty() == true ?
+                new ArrayList<AttrEntity>() :
+                attrDao.selectBatchIds(listAttrId);
     }
 
 }

@@ -2,14 +2,17 @@ package com.example.gulimall.product.controller;
 
 import com.example.common.utils.PageUtils;
 import com.example.common.utils.R;
+import com.example.gulimall.product.entity.AttrEntity;
 import com.example.gulimall.product.entity.AttrGroupEntity;
+import com.example.gulimall.product.service.AttrAttrgroupRelationService;
 import com.example.gulimall.product.service.AttrGroupService;
 import com.example.gulimall.product.service.CategoryService;
+import com.example.gulimall.product.vo.AttrGroupVo;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 
@@ -29,14 +32,8 @@ public class AttrGroupController {
 
     private final CategoryService categoryService;
 
-    //api/product/attrgroup/3/attr/relation?t=1670765272239
-    ///product/attrgroup/{attrgroupId}/attr/relation
+    private final AttrAttrgroupRelationService attrAttrgroupRelationService;
 
-//    @GetMapping("/{attrgroupId}//attr/relation")
-//    public R getAttrGroupRelation(@PathVariable("attrgroupId") String attrgroupId){
-//
-//        return R.ok();
-//    }
 
     /**
      * 列表
@@ -50,7 +47,11 @@ public class AttrGroupController {
         return R.ok().put("page", page);
     }
 
-
+    @GetMapping("/{attrgroupId}/attr/relation")
+    public R getAttrRelation(@PathVariable("attrgroupId") Long attrGroupId){
+        List<AttrEntity> list = attrGroupService.getAttrRelation(attrGroupId);
+        return R.ok().put(list);
+    }
     /**
      * 信息
      */
@@ -93,8 +94,15 @@ public class AttrGroupController {
    // @RequiresPermissions("product:attrgroup:delete")
     public R delete(@RequestBody Long[] attrGroupIds){
 		attrGroupService.removeByIds(Arrays.asList(attrGroupIds));
-
         return R.ok();
     }
 
+
+//    /product/attrgroup/attr/relation/delete
+    //{"attrId":1,"attrGroupId":2}
+    @PostMapping("/attr/relation/delete")
+    public R deleteRelation(@RequestBody AttrGroupVo[] attrGroupVos){
+        attrAttrgroupRelationService.deleteRelation(attrGroupVos);
+        return R.ok();
+    }
 }
