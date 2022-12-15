@@ -105,7 +105,7 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
         BeanUtils.copyProperties(attrVo, attr);
         //保存基本信息
         this.save(attr);
-        if (Objects.equals(Constant.ProductConstant.ATTR_TYPE_BASE.getCode(), attrVo.getAttrType())) {
+        if (Objects.equals(Constant.ProductConstant.ATTR_TYPE_BASE.getCode(), attrVo.getAttrType()) && attrVo.getAttrGroupId() != null) {
             //保存关联关系
             AttrAttrgroupRelationEntity entity = new AttrAttrgroupRelationEntity();
             entity.setAttrGroupId(attrVo.getAttrGroupId());
@@ -138,7 +138,7 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
         AttrEntity entity = new AttrEntity();
         BeanUtils.copyProperties(attrVo, entity);
         this.updateById(entity);
-        if (Objects.equals(Constant.ProductConstant.ATTR_TYPE_BASE.getCode(), attrVo.getAttrType())) {
+        if (Objects.equals(Constant.ProductConstant.ATTR_TYPE_BASE.getCode(), attrVo.getAttrType()) && attrVo.getAttrGroupId() != null) {
             //更新关联关系
             QueryWrapper<AttrAttrgroupRelationEntity> wrapper = new QueryWrapper<>();
             AttrAttrgroupRelationEntity relation = new AttrAttrgroupRelationEntity();
@@ -148,6 +148,31 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
             //存在记录就更新 没有记录说明之前没有关联 需要新增关联关系
             attrAttrgroupRelationService.saveOrUpdate(relation, wrapper);
         }
+    }
+
+    @Override
+    public PageUtils getAttrgroupNoRelation(Map<String, Object> params, Long attrgroupId) {
+
+        List<AttrAttrgroupRelationEntity> relationEntityList = attrAttrgroupRelationService
+                .lambdaQuery()
+                .list();
+
+        List<Long> attrIds = relationEntityList.stream().map(obj -> {
+            return obj.getAttrId();
+        }).collect(Collectors.toList());
+
+
+        QueryWrapper<AttrEntity> wrapper = new QueryWrapper<>();
+        wrapper.notIn("attr_id", attrIds).eq("attr_type", Constant.ProductConstant.ATTR_TYPE_BASE.getCode());
+        String key = (String) params.get("key");
+        if (Objects.nonNull(key)) {
+            wrapper.and(t -> {
+                t.eq("attr_id", key).or().like("attr_name", key);
+            });
+        }
+        IPage<AttrEntity> page = this.page(new Query<AttrEntity>().getPage(params), wrapper);
+        PageUtils pageUtils = new PageUtils(page);
+        return pageUtils;
     }
 
 }

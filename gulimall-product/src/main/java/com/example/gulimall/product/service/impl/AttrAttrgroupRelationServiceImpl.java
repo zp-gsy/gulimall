@@ -9,9 +9,12 @@ import com.example.gulimall.product.dao.AttrAttrgroupRelationDao;
 import com.example.gulimall.product.entity.AttrAttrgroupRelationEntity;
 import com.example.gulimall.product.service.AttrAttrgroupRelationService;
 import com.example.gulimall.product.vo.AttrGroupVo;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @Service("attrAttrgroupRelationService")
@@ -36,6 +39,16 @@ public class AttrAttrgroupRelationServiceImpl extends ServiceImpl<AttrAttrgroupR
             });
         }
         this.remove(wrapper);
+    }
+
+    @Override
+    public void saveBatch(List<AttrGroupVo> vos) {
+        List<AttrAttrgroupRelationEntity> entityList = vos.stream().map(obj -> {
+            AttrAttrgroupRelationEntity relation = new AttrAttrgroupRelationEntity();
+            BeanUtils.copyProperties(obj, relation);
+            return relation;
+        }).collect(Collectors.toList());
+        this.saveBatch(entityList);
     }
 
 }

@@ -78,4 +78,6 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
                 attrDao.selectBatchIds(listAttrId);
     }
 
+
+
 }

@@ -6,6 +6,7 @@ import com.example.gulimall.product.entity.AttrEntity;
 import com.example.gulimall.product.entity.AttrGroupEntity;
 import com.example.gulimall.product.service.AttrAttrgroupRelationService;
 import com.example.gulimall.product.service.AttrGroupService;
+import com.example.gulimall.product.service.AttrService;
 import com.example.gulimall.product.service.CategoryService;
 import com.example.gulimall.product.vo.AttrGroupVo;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,8 @@ public class AttrGroupController {
     private final CategoryService categoryService;
 
     private final AttrAttrgroupRelationService attrAttrgroupRelationService;
+
+    private final AttrService attrService;
 
 
     /**
@@ -103,6 +106,23 @@ public class AttrGroupController {
     @PostMapping("/attr/relation/delete")
     public R deleteRelation(@RequestBody AttrGroupVo[] attrGroupVos){
         attrAttrgroupRelationService.deleteRelation(attrGroupVos);
+        return R.ok();
+    }
+
+    ///product/attrgroup/{attrgroupId}/noattr/relation
+    //获取属性分组没有关联的其他属性
+    @GetMapping("/{attrgroupId}/noattr/relation")
+    public R getAttrgroupNoRelation(@RequestParam Map<String,Object> params,
+                                    @PathVariable("attrgroupId") Long attrgroupId){
+        PageUtils page = attrService.getAttrgroupNoRelation(params,attrgroupId);
+        return R.ok().put("page", page);
+    }
+
+    ///product/attrgroup/attr/relation
+    //添加属性与分组关联关系
+    @PostMapping("/attr/relation")
+    public R createAttrRelation(@RequestBody List<AttrGroupVo> vos){
+        attrAttrgroupRelationService.saveBatch(vos);
         return R.ok();
     }
 }
