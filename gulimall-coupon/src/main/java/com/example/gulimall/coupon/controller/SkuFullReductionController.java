@@ -1,10 +1,11 @@
 package com.example.gulimall.coupon.controller;
 
+import com.example.common.to.SkuReductionTo;
 import com.example.common.utils.PageUtils;
 import com.example.common.utils.R;
 import com.example.gulimall.coupon.entity.SkuFullReductionEntity;
 import com.example.gulimall.coupon.service.SkuFullReductionService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -21,9 +22,11 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("coupon/skufullreduction")
+@RequiredArgsConstructor
 public class SkuFullReductionController {
-    @Autowired
-    private SkuFullReductionService skuFullReductionService;
+
+    private final  SkuFullReductionService skuFullReductionService;
+
 
     /**
      * 列表
@@ -78,6 +81,18 @@ public class SkuFullReductionController {
     public R delete(@RequestBody Long[] ids){
 		skuFullReductionService.removeByIds(Arrays.asList(ids));
 
+        return R.ok();
+    }
+
+    /**
+     * 保存新增商品优惠信息
+     * @param skuReductionTo
+     * @return R
+     */
+    @PostMapping("/saveReductionInfo")
+    public R saveReductionInfo(@RequestBody SkuReductionTo skuReductionTo){
+
+        skuFullReductionService.saveReductionInfo(skuReductionTo);
         return R.ok();
     }
 

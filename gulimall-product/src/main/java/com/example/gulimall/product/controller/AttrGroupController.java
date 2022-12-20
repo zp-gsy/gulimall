@@ -9,6 +9,7 @@ import com.example.gulimall.product.service.AttrGroupService;
 import com.example.gulimall.product.service.AttrService;
 import com.example.gulimall.product.service.CategoryService;
 import com.example.gulimall.product.vo.AttrGroupVo;
+import com.example.gulimall.product.vo.AttrGroupWithAttrVo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -55,6 +56,14 @@ public class AttrGroupController {
         List<AttrEntity> list = attrGroupService.getAttrRelation(attrGroupId);
         return R.ok().put(list);
     }
+
+    ///product/attrgroup/{catelogId}/withattr
+    @GetMapping("/{catelogId}/withattr")
+    public R getAttrgroupWithAttrByCatelogId(@PathVariable("catelogId") Long catelogId){
+        List<AttrGroupWithAttrVo> list = attrGroupService.getAttrgroupWithAttrByCatelogId(catelogId);
+        return R.ok().put(list);
+    }
+
     /**
      * 信息
      */

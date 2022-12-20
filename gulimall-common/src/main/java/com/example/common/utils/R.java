@@ -69,4 +69,8 @@ public class R extends LinkedHashMap<String, Object> {
 		return this;
 	}
 
+	public Integer getCode(){
+		return (Integer) this.get("code");
+	}
+
 }
