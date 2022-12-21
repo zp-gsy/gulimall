@@ -9,6 +9,7 @@ import com.example.gulimall.ware.dao.WareSkuDao;
 import com.example.gulimall.ware.entity.WareSkuEntity;
 import com.example.gulimall.ware.service.WareSkuService;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.Map;
 
@@ -18,9 +19,19 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
+        QueryWrapper<WareSkuEntity> queryWrapper = new QueryWrapper<>();
+        String key = (String) params.get("skuId");
+        if(StringUtils.hasLength(key)){
+            queryWrapper.eq("sku_id", key);
+        }
+
+        String wareId = (String) params.get("wareId");
+        if(StringUtils.hasLength(wareId)){
+            queryWrapper.eq("ware_id", wareId);
+        }
         IPage<WareSkuEntity> page = this.page(
                 new Query<WareSkuEntity>().getPage(params),
-                new QueryWrapper<WareSkuEntity>()
+                queryWrapper
         );
 
         return new PageUtils(page);

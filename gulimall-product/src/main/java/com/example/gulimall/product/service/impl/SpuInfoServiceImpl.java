@@ -23,6 +23,7 @@ import org.springframework.util.StringUtils;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -98,23 +99,23 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
         BeanUtils.copyProperties(bounds, spuBoundTo);
         spuBoundTo.setSkuId(spuInfoEntity.getId());
         R r1 = couponFeignService.saveSpuBounds(spuBoundTo);
-        if(r1.getCode() != 0){
+        if (r1.getCode() != 0) {
             log.info("新增商品调用优惠系统保存积分信息失败: {}", r1);
         }
 
         //5 保存当前spu 对应 sku 信息
         List<Skus> skus = spuInfo.getSkus();
-        if(skus != null && skus.size()>0){
-            skus.forEach(sku->{
+        if (skus != null && skus.size() > 0) {
+            skus.forEach(sku -> {
                 List<Images> skuImages = sku.getImages();
                 String defaultImages = "";
                 for (int i = 0; i < skuImages.size(); i++) {
-                    if(skuImages.get(i).getDefaultImg()==1){
+                    if (skuImages.get(i).getDefaultImg() == 1) {
                         defaultImages = skuImages.get(i).getImgUrl();
                     }
                 }
                 SkuInfoEntity skuInfoEntity = new SkuInfoEntity();
-                BeanUtils.copyProperties(sku,skuInfoEntity);
+                BeanUtils.copyProperties(sku, skuInfoEntity);
                 skuInfoEntity.setSpuId(spuInfoEntity.getId())
                         .setBrandId(spuInfo.getBrandId())
                         .setCatalogId(spuInfo.getCatalogId())
@@ -124,14 +125,15 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
                 skuInfoService.save(skuInfoEntity);
                 // 5.2 sku 图片集信息 pms_sku_images
                 List<SkuImagesEntity> skuImagesEntityList = skuImages.stream().map(img -> {
-                    SkuImagesEntity skuImagesEntity = new SkuImagesEntity();
-                    skuImagesEntity.setSkuId(skuInfoEntity.getSkuId());
-                    skuImagesEntity.setImgUrl(img.getImgUrl());
-                    skuImagesEntity.setDefaultImg(img.getDefaultImg());
-                    return skuImagesEntity;
-                }).filter((t)->{return StringUtils.hasLength(t.getImgUrl());
+                            SkuImagesEntity skuImagesEntity = new SkuImagesEntity();
+                            skuImagesEntity.setSkuId(skuInfoEntity.getSkuId());
+                            skuImagesEntity.setImgUrl(img.getImgUrl());
+                            skuImagesEntity.setDefaultImg(img.getDefaultImg());
+                            return skuImagesEntity;
+                        }).filter((t) -> {
+                            return StringUtils.hasLength(t.getImgUrl());
                         })
-                 .collect(Collectors.toList());
+                        .collect(Collectors.toList());
                 skuImagesService.saveBatch(skuImagesEntityList);
 
                 //5.3 sku 销售属性信息 pms_sku_sale_attr_value
@@ -144,27 +146,61 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
                 }).collect(Collectors.toList());
                 skuSaleAttrValueService.saveBatch(skuSaleAttrValueEntityList);
 
-               // 5.4 sku 优惠信息 满减信息等 mall_sms -> sms_sku_ladder(打折表) sms_sku_full_reduction 满减表  sms_member_price会员价格表
+                // 5.4 sku 优惠信息 满减信息等 mall_sms -> sms_sku_ladder(打折表) sms_sku_full_reduction 满减表  sms_member_price会员价格表
                 SkuReductionTo skuReductionTo = new SkuReductionTo();
                 BeanUtils.copyProperties(sku, skuReductionTo);
                 skuReductionTo.setSkuId(skuInfoEntity.getSkuId());
                 skuReductionTo.setMemberPrice(sku.getMemberPrice());
                 R r = couponFeignService.saveReductionInfo(skuReductionTo);
-                if(r.getCode() != 0){
-                   log.info("新增商品调用优惠系统保存优惠信息失败: {}", r);
+                if (r.getCode() != 0) {
+                    log.info("新增商品调用优惠系统保存优惠信息失败: {}", r);
                 }
 
             });
         }
         // 5.1 sku 基本信息 pms_sku_info
-            // 5.2 sku 图片集信息 pms_sku_images
-            // 5.3 sku 销售属性信息 pms_sku_sale_attr_value
-            // 5.4 sku 优惠信息 满减信息等 mall_sms -> sms_sku_ladder(打折表) sms_sku_full_reduction 满减表  sms_member_price会员价格表
+        // 5.2 sku 图片集信息 pms_sku_images
+        // 5.3 sku 销售属性信息 pms_sku_sale_attr_value
+        // 5.4 sku 优惠信息 满减信息等 mall_sms -> sms_sku_ladder(打折表) sms_sku_full_reduction 满减表  sms_member_price会员价格表
     }
 
     @Override
-    public void saveBaseSpuInfo( SpuInfoEntity spuInfoEntity) {
+    public void saveBaseSpuInfo(SpuInfoEntity spuInfoEntity) {
         this.save(spuInfoEntity);
+    }
+
+    @Override
+    public PageUtils queryPageByCondition(Map<String, Object> params) {
+        QueryWrapper<SpuInfoEntity> queryWrapper = new QueryWrapper<>();
+
+        String key = (String) params.get("key");
+        if (StringUtils.hasLength(key)) {
+            queryWrapper.and(w -> {
+                w.eq("id", key).or().like("spu_name", key);
+            });
+        }
+
+        String catelogId = (String) params.get("catelogId");
+        if (StringUtils.hasLength(catelogId) && !Objects.equals("0", catelogId)) {
+            queryWrapper.eq("catalog_id", catelogId);
+        }
+
+        String brandId = (String) params.get("brandId");
+        if (StringUtils.hasLength(brandId) && !Objects.equals("0", brandId)) {
+            queryWrapper.eq("brand_id", brandId);
+        }
+
+        String status = (String) params.get("status");
+        if (StringUtils.hasLength(status)) {
+            queryWrapper.eq("publish_status", status);
+        }
+
+        IPage<SpuInfoEntity> page = this.page(
+                new Query<SpuInfoEntity>().getPage(params),
+                queryWrapper
+        );
+
+        return new PageUtils(page);
     }
 
 }

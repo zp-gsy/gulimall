@@ -29,6 +29,7 @@
         <mysql.connector>8.0.30</mysql.connector>
         <bootstrap.verson>3.1.5</bootstrap.verson>
         <loadbalancer.version>3.0.3</loadbalancer.version>
+        <joda.time.version>2.9.9</joda.time.version>
     </properties>
 
     <dependencies>
@@ -96,6 +97,12 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-bootstrap</artifactId>
             <version>${bootstrap.verson}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>${joda.time.version}</version>
         </dependency>
 
         <dependency>
