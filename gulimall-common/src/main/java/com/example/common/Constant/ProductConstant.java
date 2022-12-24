@@ -7,10 +7,10 @@ import lombok.Getter;
  * @date 2022/12/14
  * @apiNote
  */
-public class Constant {
+public class ProductConstant {
 
     @Getter
-    public enum ProductConstant{
+    public enum ProductAttrEnumConstant{
         ATTR_TYPE_SALE(0,"销售属性"),
         ATTR_TYPE_BASE(1, "基础属性");
 
@@ -18,7 +18,7 @@ public class Constant {
 
         private String msg;
 
-        ProductConstant(Integer code, String msg) {
+        ProductAttrEnumConstant(Integer code, String msg) {
             this.code = code;
             this.msg = msg;
         }

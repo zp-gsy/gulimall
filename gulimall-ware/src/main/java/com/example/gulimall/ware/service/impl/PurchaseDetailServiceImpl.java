@@ -9,6 +9,7 @@ import com.example.gulimall.ware.dao.PurchaseDetailDao;
 import com.example.gulimall.ware.entity.PurchaseDetailEntity;
 import com.example.gulimall.ware.service.PurchaseDetailService;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.Map;
 
@@ -18,9 +19,36 @@ public class PurchaseDetailServiceImpl extends ServiceImpl<PurchaseDetailDao, Pu
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
+        QueryWrapper<PurchaseDetailEntity> queryWrapper = new QueryWrapper<>();
+        /**
+         *    key: '华为',//检索关键字
+         *    status: 0,//状态
+         *    wareId: 1,//仓库id
+         */
+
+        String key = (String) params.get("key");
+        if (StringUtils.hasLength(key)) {
+            queryWrapper.and(t -> {
+                t.eq("purchase_id", key).or().eq("sku_id", key);
+            });
+        }
+
+        String status = (String) params.get("status");
+        if (StringUtils.hasLength(status)) {
+            queryWrapper.eq("status", status);
+        }
+
+        String wareId = (String) params.get("wareId");
+        if (StringUtils.hasLength(wareId)) {
+            queryWrapper.and(t -> {
+                t.eq("ware_id", wareId);
+            });
+        }
+
+
         IPage<PurchaseDetailEntity> page = this.page(
                 new Query<PurchaseDetailEntity>().getPage(params),
-                new QueryWrapper<PurchaseDetailEntity>()
+                queryWrapper
         );
 
         return new PageUtils(page);

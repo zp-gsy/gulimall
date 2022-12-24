@@ -3,7 +3,7 @@ package com.example.gulimall.product.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.example.common.Constant.Constant;
+import com.example.common.Constant.ProductConstant;
 import com.example.common.utils.PageUtils;
 import com.example.common.utils.Query;
 import com.example.gulimall.product.dao.AttrDao;
@@ -56,8 +56,8 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
         QueryWrapper<AttrEntity> wrapper = new QueryWrapper<AttrEntity>()
                 .eq("attr_type",
                         attrType.equalsIgnoreCase("base") ?
-                                Constant.ProductConstant.ATTR_TYPE_BASE.getCode() :
-                                Constant.ProductConstant.ATTR_TYPE_SALE.getCode()
+                                ProductConstant.ProductAttrEnumConstant.ATTR_TYPE_BASE.getCode() :
+                                ProductConstant.ProductAttrEnumConstant.ATTR_TYPE_SALE.getCode()
                 );
         String key = (String) params.get("key");
         if (catelogId != 0) {
@@ -105,7 +105,7 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
         BeanUtils.copyProperties(attrVo, attr);
         //保存基本信息
         this.save(attr);
-        if (Objects.equals(Constant.ProductConstant.ATTR_TYPE_BASE.getCode(), attrVo.getAttrType()) && attrVo.getAttrGroupId() != null) {
+        if (Objects.equals(ProductConstant.ProductAttrEnumConstant.ATTR_TYPE_BASE.getCode(), attrVo.getAttrType()) && attrVo.getAttrGroupId() != null) {
             //保存关联关系
             AttrAttrgroupRelationEntity entity = new AttrAttrgroupRelationEntity();
             entity.setAttrGroupId(attrVo.getAttrGroupId());
@@ -138,7 +138,7 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
         AttrEntity entity = new AttrEntity();
         BeanUtils.copyProperties(attrVo, entity);
         this.updateById(entity);
-        if (Objects.equals(Constant.ProductConstant.ATTR_TYPE_BASE.getCode(), attrVo.getAttrType()) && attrVo.getAttrGroupId() != null) {
+        if (Objects.equals(ProductConstant.ProductAttrEnumConstant.ATTR_TYPE_BASE.getCode(), attrVo.getAttrType()) && attrVo.getAttrGroupId() != null) {
             //更新关联关系
             QueryWrapper<AttrAttrgroupRelationEntity> wrapper = new QueryWrapper<>();
             AttrAttrgroupRelationEntity relation = new AttrAttrgroupRelationEntity();
@@ -163,7 +163,7 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
 
 
         QueryWrapper<AttrEntity> wrapper = new QueryWrapper<>();
-        wrapper.notIn("attr_id", attrIds).eq("attr_type", Constant.ProductConstant.ATTR_TYPE_BASE.getCode());
+        wrapper.notIn("attr_id", attrIds).eq("attr_type", ProductConstant.ProductAttrEnumConstant.ATTR_TYPE_BASE.getCode());
         String key = (String) params.get("key");
         if (Objects.nonNull(key)) {
             wrapper.and(t -> {
