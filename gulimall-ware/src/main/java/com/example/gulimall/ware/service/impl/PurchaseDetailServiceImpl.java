@@ -11,6 +11,7 @@ import com.example.gulimall.ware.service.PurchaseDetailService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.List;
 import java.util.Map;
 
 
@@ -52,6 +53,11 @@ public class PurchaseDetailServiceImpl extends ServiceImpl<PurchaseDetailDao, Pu
         );
 
         return new PageUtils(page);
+    }
+
+    @Override
+    public List<PurchaseDetailEntity> listByPurchaseId(Long id) {
+        return  this.lambdaQuery().eq(PurchaseDetailEntity::getPurchaseId, id).list();
     }
 
 }

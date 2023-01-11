@@ -79,7 +79,6 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
         spuImagesService.saveImages(spuInfoEntity.getId(), images);
 
         //4 spu 规格参数 pms_product_attr_value
-
         List<BaseAttrs> baseAttrs = spuInfo.getBaseAttrs();
         List<ProductAttrValueEntity> productAttrValueEntities = baseAttrs.stream().map(attr -> {
             ProductAttrValueEntity productAttrValueEntity = new ProductAttrValueEntity();
@@ -92,7 +91,6 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
             return productAttrValueEntity;
         }).collect(Collectors.toList());
         productAttrValueService.saveBatch(productAttrValueEntities);
-
         //5 spu mall_sms 积分信息
         Bounds bounds = spuInfo.getBounds();
         SpuBoundTo spuBoundTo = new SpuBoundTo();

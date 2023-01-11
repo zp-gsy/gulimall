@@ -3,8 +3,11 @@ package com.example.gulimall.product.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.common.utils.PageUtils;
 import com.example.gulimall.product.entity.AttrEntity;
+import com.example.gulimall.product.entity.ProductAttrValueEntity;
 import com.example.gulimall.product.vo.AttrVo;
+import com.example.gulimall.product.vo.ProductAttrVo;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -27,5 +30,16 @@ public interface AttrService extends IService<AttrEntity> {
     void updateAttr(AttrVo attrVo);
 
     PageUtils getAttrgroupNoRelation(Map<String, Object> params, Long attrgroupId);
+
+    List<ProductAttrValueEntity> getListForSpu(Long spuId);
+
+    void updateBySpuId(Long spuId, List<ProductAttrVo> productAttrVo);
+
+    void test(String id);
+
+    List<AttrVo> testRedis();
+
+    List<AttrVo> testRedisLock();
+
 }
 

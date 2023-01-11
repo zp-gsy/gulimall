@@ -1,34 +1,75 @@
 package com.example.gulimall.product;
 
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.example.gulimall.product.entity.SpuInfoEntity;
+import com.example.gulimall.product.service.AttrService;
 import com.example.gulimall.product.service.SpuInfoService;
 import org.junit.jupiter.api.Test;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
+
+import java.util.UUID;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 @SpringBootTest
 class GulimallProductApplicationTests {
 
     @Autowired
     SpuInfoService spuInfoService;
+
+    @Autowired
+    AttrService attrService;
+
+    @Autowired
+    StringRedisTemplate stringRedisTemplate;
+
+    @Autowired
+    RedisConnectionFactory redisConnectionFactory;
+
+    @Autowired
+    RedissonClient redissonClient;
+
+    @Test
+    public void testRedisson(){
+        System.out.println(redissonClient);
+    }
+
     @Test
     void contextLoads() {
 
-//        SpuInfoEntity spuInfo = new SpuInfoEntity();
-//        spuInfo.setSpuName("cesi");
-//        spuInfo.setBrandId(99L);
-//        spuInfoService.save(spuInfo);
-        SpuInfoEntity entity = new SpuInfoEntity();
-        entity.setSpuName("zhangsan");
-        UpdateWrapper<SpuInfoEntity> updateWrapper = new UpdateWrapper<>();
-        updateWrapper.eq("brand_id", 99L);
-        spuInfoService.update(entity, updateWrapper);
-//        SpuInfoEntity entity = new SpuInfoEntity();
-//        entity.setBrandId(99L);
-//        UpdateWrapper<SpuInfoEntity> updateWrapper = new UpdateWrapper<SpuInfoEntity>(entity);
-//        updateWrapper.set("spu_name", "ceshihhh");
-//        spuInfoService.update(updateWrapper);
+        ThreadPoolExecutor executor = new ThreadPoolExecutor(2, 2, 0L, TimeUnit.SECONDS,new LinkedBlockingQueue<>(1));
+         for (int i = 0; i < 2; i++) {
+            String a = String.valueOf(i);
+            executor.execute(()->{
+                attrService.test(a);
+                System.out.println("================================");
+//                attrService.test(a);
+            });
+             try {
+                 TimeUnit.SECONDS.sleep(2);
+                 System.out.println(Thread.currentThread().getName()+"睡眠两秒");
+             }catch (Exception e){
+
+             }
+        }
+    }
+
+    @Test
+    public void testRedis(){
+        ValueOperations<String, String> ops = stringRedisTemplate.opsForValue();
+
+        ops.set("hello", "world_"+ UUID.randomUUID());
+
+        String hello = ops.get("hello");
+
+        System.out.println("redis保存的值：" + hello);
+
+        String name = redisConnectionFactory.getClass().getName();
+        System.out.println(name);
     }
 
 
