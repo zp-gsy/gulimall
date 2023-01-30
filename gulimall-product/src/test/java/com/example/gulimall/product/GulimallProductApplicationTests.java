@@ -11,9 +11,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 
 import java.util.UUID;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 @SpringBootTest
 class GulimallProductApplicationTests {
@@ -72,6 +70,17 @@ class GulimallProductApplicationTests {
         System.out.println(name);
     }
 
+    @Test
+    void test(){
+        ExecutorService service = Executors.newFixedThreadPool(2);
+        for (int i = 0; i < 2; i++) {
+            service.submit(() -> {
+                Singleton instance = Singleton.getInstance();
+                System.out.println(instance.hashCode());
+            });
+        }
+
+    }
 
 
 }
