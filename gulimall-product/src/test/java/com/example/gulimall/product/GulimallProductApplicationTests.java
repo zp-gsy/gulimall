@@ -44,8 +44,10 @@ class GulimallProductApplicationTests {
             String a = String.valueOf(i);
             executor.execute(()->{
                 attrService.test(a);
+//                attrService.updateById();
                 System.out.println("================================");
 //                attrService.test(a);
+
             });
              try {
                  TimeUnit.SECONDS.sleep(2);
@@ -81,6 +83,9 @@ class GulimallProductApplicationTests {
         }
 
     }
+
+
+
 
 
 }

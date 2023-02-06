@@ -4,6 +4,7 @@
 package com.example.gulimall.product.vo;
 
 import lombok.Data;
+import lombok.ToString;
 
 /**
  * Auto-generated: 2022-12-18 21:46:41
@@ -13,6 +14,7 @@ import lombok.Data;
  */
 
 @Data
+@ToString
 public class Attr {
 
     private Long attrId;
