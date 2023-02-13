@@ -16,7 +16,11 @@ spring:
     time-zone: Asia/Shanghai
   redis:
     host: 192.168.56.10
-
+  rabbitmq:
+    host: 192.168.56.10
+    virtual-host: /
+    port: 5672
+    publisher-confirm-type: correlated
 
 mybatis-plus:
   global-config:

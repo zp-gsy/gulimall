@@ -18,6 +18,7 @@ import com.example.gulimall.product.entity.ProductAttrValueEntity;
 import com.example.gulimall.product.service.AttrAttrgroupRelationService;
 import com.example.gulimall.product.service.AttrService;
 import com.example.gulimall.product.service.ProductAttrValueService;
+import com.example.gulimall.product.vo.Attr;
 import com.example.gulimall.product.vo.AttrResVo;
 import com.example.gulimall.product.vo.AttrVo;
 import com.example.gulimall.product.vo.ProductAttrVo;
@@ -32,7 +33,11 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 
@@ -404,6 +409,41 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
         }
         redisTemplate.opsForValue().set("attrVoJson", JSON.toJSONString(list));
         return list;
+    }
+
+    static ExecutorService executor = Executors.newFixedThreadPool(3);
+    public static void main(String[] args) {
+//        static ExecutorService executorService =
+        // i1 1 i2 2 i3 1 三个线程  一条任务 就是2秒
+        // 一条任务 4秒 执行3个
+        for (int i = 0; i < 5; i++) {
+            executor.submit(()->extracted());
+        }
+
+
+    }
+
+    private static void extracted() {
+        try {
+            AtomicBoolean thr = new AtomicBoolean(false);
+            CompletableFuture<List<Attr>> future = CompletableFuture.supplyAsync(()->{
+                return Arrays.asList(new Attr());
+            }).whenComplete((res,tex)->{
+                if(tex!=null){
+                    log.info(tex.getMessage());
+                    thr.set(true);
+                }
+            });
+            CompletableFuture<Void> completableFuture = CompletableFuture.allOf(future);
+
+             completableFuture.get();
+
+            if(thr.equals(true)){
+                return;
+            }
+        }catch (Exception e){
+            log.info("catch：：：：：：:"+ e);
+        }
     }
 
 }
